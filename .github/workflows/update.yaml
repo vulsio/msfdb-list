@@ -8,7 +8,7 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out fetch data repository
+      - name: Check out fetch code repository
         uses: actions/checkout@v4
         with:
           repository: vulsio/msfdb-list-updater
