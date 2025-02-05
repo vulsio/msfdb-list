@@ -1,0 +1,40 @@
+name: Fetch
+on:
+  schedule:
+    - cron: "0 * * * *" # every hour
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          repository: vulsio/msfdb-list-updater
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Check out fetch data repository
+        uses: actions/checkout@v4
+        with:
+          path: ~/.cache/msfdb-list-updater/msfdb-list
+
+      - name: Fetch Metasplit Framework
+        run: go run main.go -target msf
+
+      - name: Set Git config
+        run: |
+          git -C ~/.cache/msfdb-list-updater/msfdb-list config user.email "action@github.com"
+          git -C ~/.cache/msfdb-list-updater/msfdb-list config user.name "GitHub Action"
+
+      - name: Push
+        run: |
+          if [[ -n $(git -C ~/.cache/msfdb-list-updater/msfdb-list status --porcelain) ]]; then
+            git -C ~/.cache/msfdb-list-updater/msfdb-list add .
+            git -C ~/.cache/msfdb-list-updater/msfdb-list commit -m "Metasploit Framework Modules"
+            git -C ~/.cache/msfdb-list-updater/msfdb-list push
+          fi
