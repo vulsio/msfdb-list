@@ -33,7 +33,7 @@ jobs:
 
       - name: Push
         run: |
-          if [[ -n $(git -C msfdb-list status --porcelain) ]]; then
+          if [[ $(git -C msfdb-list status --porcelain | wc -l) -gt 1 ]]; then
             git -C msfdb-list add .
             git -C msfdb-list commit -m "Metasploit Framework Modules"
             git -C msfdb-list push
